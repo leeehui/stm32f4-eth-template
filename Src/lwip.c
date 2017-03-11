@@ -93,16 +93,31 @@ static void tcpecho_thread(void *arg)
 		err = netconn_bind(conn, NULL, 3004);
 		if (err == ERR_OK)
 		{
+			ip_addr_t ipaddr;
+			IP4_ADDR(&ipaddr, 192,168,0,9);
+			netconn_connect(conn, &ipaddr,6000);
+			printf("conneted\n");
+	
 			/* Tell connection to go into listening mode. */
 //			netconn_listen(conn);
-			//while (1)
+			while (1)
 			{
-				ip_addr_t ipaddr;
-				IP4_ADDR(&ipaddr, 192,168,0,9);
-				netconn_connect(conn, &ipaddr,6000);
-//				/* Grab new connection. */
+				recv_err = netconn_recv(conn, &buf);
+				
+				if(recv_err == ERR_OK)
+				{
+					printf("received data\n");
+					do
+					{
+					netbuf_data(buf, &data, &len);
+					netconn_write(conn, data, len, NETCONN_COPY);
+					}
+					while (netbuf_next(buf) >= 0);
+					netbuf_delete(buf);
+				}
+				/* Grab new connection. */
 //				accept_err = netconn_accept(conn, &newconn);
-//				/* Process the new connection. */
+				/* Process the new connection. */
 //				if (accept_err == ERR_OK)
 //				{
 //					while (( recv_err = netconn_recv(newconn, &buf)) == ERR_OK)

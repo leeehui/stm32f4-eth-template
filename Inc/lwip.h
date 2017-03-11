@@ -82,6 +82,7 @@ void MX_LWIP_Init(void);
  */ 
 void MX_LWIP_Process(void);
 
+
 /* USER CODE END 1 */
 
 #ifdef __cplusplus
